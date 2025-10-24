@@ -1,66 +1,95 @@
 <div class="max-w-5xl mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-6 text-center text-green-600">
-      FindJob — Companies
-    </h1>
-  
-    <input
-      [(ngModel)]="query"
-      (input)="onSearchTerm(query)"
-      placeholder="Search companies..."
-      class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-4 focus:ring focus:ring-green-500"
-    />
-  
-    <div *ngIf="loading" class="text-center text-green-500 font-medium">
-      Loading...
+  <h1 class="text-3xl font-bold mb-6 text-center text-blue-600">
+    FindJob — Vacancies
+  </h1>
+
+  <!-- Search & City Filter -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-3">
+    <div class="flex gap-3 w-full md:w-3/4">
+      <input
+        [(ngModel)]="query"
+        (input)="onSearchInput($event)"
+        placeholder="Search vacancies..."
+        class="border border-gray-300 rounded-lg px-4 py-2 w-full focus:ring focus:ring-blue-500"
+      />
+
+      <!-- City Dropdown -->
+      <select
+        [(ngModel)]="selectedCity"
+        (change)="onCityChange(selectedCity)"
+        class="border border-gray-300 rounded-lg px-3 py-2 bg-white cursor-pointer focus:ring focus:ring-blue-500"
+      >
+        <option value="">All cities</option>
+        <option *ngFor="let c of cities" [value]="c">{{ c }}</option>
+      </select>
     </div>
-  
-    <div *ngIf="!loading && companies.length === 0" class="text-center text-gray-500 py-10">
-      No companies found
+
+    <label class="flex items-center gap-2 text-sm text-gray-600">
+      <input type="checkbox" [(ngModel)]="lazyMode" />
+      Lazy load
+    </label>
+  </div>
+
+  <!-- Vacancy list etc. (same as before) -->
+  <div *ngIf="vacancies.length === 0 && !loading" class="text-center text-gray-500 py-10">
+    No vacancies found
+  </div>
+
+  <div
+    *ngFor="let v of vacancies"
+    class="p-4 mb-4 bg-white shadow rounded-lg flex justify-between items-center transition hover:shadow-lg"
+  >
+    <div>
+      <h2 class="font-semibold text-xl text-gray-800">
+        {{ v.position || 'Untitled Position' }}
+      </h2>
+      <p class="text-sm text-gray-500">
+        {{ v.company?.companyName || 'Unknown Company' }} — {{ v.location || 'No location' }}
+      </p>
+      <p class="text-sm mt-1 text-gray-700">
+        {{ v.salary || 'Salary not specified' }}
+      </p>
     </div>
-  
-    <div
-      *ngFor="let c of companies"
-      class="p-4 mb-4 bg-white shadow rounded-lg flex justify-between items-center hover:shadow-md transition"
-    >
-      <div>
-        <h2 class="font-semibold text-xl text-gray-800">
-          {{ c.companyName || 'Untitled Company' }}
-        </h2>
-        <p class="text-sm text-gray-500">{{ c.city || 'City not specified' }}</p>
-        <p class="text-sm mt-1 text-gray-700 line-clamp-2">
-          {{ c.companyDescription || 'No description available' }}
-        </p>
-      </div>
-  
+
+    <div class="flex gap-3">
       <button
-        [routerLink]="['/company', c.id]"
-        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+        [routerLink]="['/vacancy', v.id]"
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
       >
         Details
       </button>
-    </div>
-  
-    <!-- Pagination -->
-    <div *ngIf="totalPages > 1" class="flex justify-center items-center gap-4 mt-6">
       <button
-        (click)="prevPage()"
-        [disabled]="page === 0"
-        class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded disabled:opacity-50"
+        (click)="toggleFavorite(v.id)"
+        class="px-3 py-2 border rounded transition"
+        [class.bg-yellow-300]="isFav(v.id)"
       >
-        ‹ Prev
-      </button>
-  
-      <span class="text-sm text-gray-600">
-        Page {{ page + 1 }} / {{ totalPages }}
-      </span>
-  
-      <button
-        (click)="nextPage()"
-        [disabled]="page >= totalPages - 1"
-        class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded disabled:opacity-50"
-      >
-        Next ›
+        {{ isFav(v.id) ? '★' : '☆' }}
       </button>
     </div>
+  </div>
+
+  <!-- Pagination & Loader (same as before) -->
+  <div *ngIf="!lazyMode && totalPages > 1" class="flex justify-center items-center gap-4 mt-6">
+    <button
+      (click)="prevPage()"
+      [disabled]="page === 0"
+      class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded disabled:opacity-50"
+    >
+      ‹ Prev
+    </button>
+
+    <span class="text-sm text-gray-600">Page {{ page + 1 }} / {{ totalPages }}</span>
+
+    <button
+      (click)="nextPage()"
+      [disabled]="page >= totalPages - 1"
+      class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded disabled:opacity-50"
+    >
+      Next ›
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="text-center mt-6 text-blue-500 font-medium animate-pulse">
+    Loading...
+  </div>
 </div>
-  
