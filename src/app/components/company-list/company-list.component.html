@@ -1,0 +1,66 @@
+<div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6 text-center text-green-600">
+      FindJob — Companies
+    </h1>
+  
+    <input
+      [(ngModel)]="query"
+      (input)="onSearchTerm(query)"
+      placeholder="Search companies..."
+      class="border border-gray-300 rounded-lg px-4 py-2 w-full mb-4 focus:ring focus:ring-green-500"
+    />
+  
+    <div *ngIf="loading" class="text-center text-green-500 font-medium">
+      Loading...
+    </div>
+  
+    <div *ngIf="!loading && companies.length === 0" class="text-center text-gray-500 py-10">
+      No companies found
+    </div>
+  
+    <div
+      *ngFor="let c of companies"
+      class="p-4 mb-4 bg-white shadow rounded-lg flex justify-between items-center hover:shadow-md transition"
+    >
+      <div>
+        <h2 class="font-semibold text-xl text-gray-800">
+          {{ c.companyName || 'Untitled Company' }}
+        </h2>
+        <p class="text-sm text-gray-500">{{ c.city || 'City not specified' }}</p>
+        <p class="text-sm mt-1 text-gray-700 line-clamp-2">
+          {{ c.companyDescription || 'No description available' }}
+        </p>
+      </div>
+  
+      <button
+        [routerLink]="['/company', c.id]"
+        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+      >
+        Details
+      </button>
+    </div>
+  
+    <!-- Pagination -->
+    <div *ngIf="totalPages > 1" class="flex justify-center items-center gap-4 mt-6">
+      <button
+        (click)="prevPage()"
+        [disabled]="page === 0"
+        class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded disabled:opacity-50"
+      >
+        ‹ Prev
+      </button>
+  
+      <span class="text-sm text-gray-600">
+        Page {{ page + 1 }} / {{ totalPages }}
+      </span>
+  
+      <button
+        (click)="nextPage()"
+        [disabled]="page >= totalPages - 1"
+        class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded disabled:opacity-50"
+      >
+        Next ›
+      </button>
+    </div>
+</div>
+  

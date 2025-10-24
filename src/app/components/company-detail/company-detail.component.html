@@ -1,0 +1,27 @@
+<div class="max-w-3xl mx-auto p-6 bg-white shadow rounded-lg mt-10">
+    <div *ngIf="loading" class="text-center text-green-500 font-medium">
+      Loading...
+    </div>
+  
+    <ng-container *ngIf="!loading && company">
+      <h1 class="text-3xl font-bold text-gray-800 mb-4">
+        {{ company.companyName }}
+      </h1>
+      <p class="text-gray-600 mb-2">
+        <strong>City:</strong> {{ company.city || 'Not specified' }}
+      </p>
+      <p class="text-gray-700 leading-relaxed mb-4">
+        {{ company.companyDescription || 'No description available' }}
+      </p>
+  
+      <a
+        *ngIf="company.companyUrl"
+        [href]="company.companyUrl"
+        target="_blank"
+        class="text-green-600 hover:underline"
+      >
+        Visit Company Website →
+      </a>
+    </ng-container>
+  </div>
+  
