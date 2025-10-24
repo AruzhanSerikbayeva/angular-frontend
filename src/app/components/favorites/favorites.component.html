@@ -1,0 +1,23 @@
+<div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6 text-center text-yellow-600">Favorite Vacancies</h1>
+  
+    <div *ngIf="favorites.length === 0" class="text-center text-gray-500 py-10">
+      No favorites saved yet.
+    </div>
+  
+    <div *ngFor="let v of vacancies" class="p-4 mb-4 bg-white shadow rounded-lg flex justify-between items-center">
+      <div>
+        <h2 class="font-semibold text-xl text-gray-800">{{ v.position }}</h2>
+        <p class="text-sm text-gray-500">{{ v.company?.companyName }} — {{ v.location }}</p>
+        <p class="text-sm mt-1 text-gray-700">{{ v.salary || 'Salary not specified' }}</p>
+      </div>
+  
+      <button
+        (click)="removeFavorite(v.id)"
+        class="text-red-600 border border-red-400 px-3 py-2 rounded hover:bg-red-100 transition"
+      >
+        Remove
+      </button>
+    </div>
+</div>
+  
